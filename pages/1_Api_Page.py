@@ -3,8 +3,6 @@ import requests
 import pandas as pd
 import matplotlib.pyplot as plt
 
-API_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjZmE2MTYwM2Y0YTdlNzYwYmNhNDY4MjFkZWVmYzZmNyIsIm5iZiI6MTc3NTMzNTkxOS43NDEsInN1YiI6IjY5ZDE3OWVmMWNhZGNlOTBjNWU0ZmZiNiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.FypBaGg9WkIdz0DR2o2n_wzjWvofJz_iOcpb7FXylzU"
-
 HEADERS = {
     "accept": "application/json",
     "Authorization": f"Bearer {API_TOKEN}"
