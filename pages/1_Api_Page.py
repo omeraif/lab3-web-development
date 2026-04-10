@@ -13,8 +13,14 @@ HEADERS = {
 def get_genres():
     url = "https://api.themoviedb.org/3/genre/movie/list"
     response = requests.get(url, headers=HEADERS)
+
+    if response.status_code != 200:
+        st.error(f"Genre request failed: {response.status_code}")
+        st.write(response.text)
+        return []
+
     data = response.json()
-    return data.get("genres",[])
+    return data.get("genres", [])
 
 def search_movies(query):
     url = "https://api.themoviedb.org/3/search/movie"
@@ -25,6 +31,12 @@ def search_movies(query):
         "page": 1
     }
     response = requests.get(url, headers=HEADERS, params=params)
+
+    if response.status_code != 200:
+        st.error(f"Search request failed: {response.status_code}")
+        st.write(response.text)
+        return []
+
     data = response.json()
     return data.get("results", [])
 
@@ -38,6 +50,12 @@ def discover_movies_by_genre(genre_id):
         "sort_by": "popularity.desc"
     }
     response = requests.get(url, headers=HEADERS, params=params)
+
+    if response.status_code != 200:
+        st.error(f"Discover request failed: {response.status_code}")
+        st.write(response.text)
+        return []
+
     data = response.json()
     return data.get("results", [])
 
@@ -53,9 +71,9 @@ query = st.text_input("Enter a movie title:")
 
 genres = get_genres()
 genre_dict = {genre["name"]: genre["id"] for genre in genres}
-selected_genre = st.selectbox ("Choose a genre:", ["Any"] + list(genre_dict.keys()))
+selected_genre = st.selectbox("Choose a genre:", ["Any"] + list(genre_dict.keys()))
 
-min_rating = st.slider("Minimum rating:", 0.0, 10.0, 6.0, 0.5)
+min_rating = st.slider("Minimum rating:", 0.0, 10.0, 3.0, 0.5)
 
 if st.button("Search Movies"):
     if query.strip() == "" and selected_genre == "Any":
@@ -111,5 +129,4 @@ if st.button("Search Movies"):
             ax.set_xlabel("Rating")
             ax.set_title("Movie Ratings")
             plt.tight_layout()
-            st.pyplot(fig)
-                                        
+            st.pyplot(fig)                   
