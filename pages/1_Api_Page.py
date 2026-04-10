@@ -3,16 +3,17 @@ import requests
 import pandas as pd
 import matplotlib.pyplot as plt
 
-API_TOKEN = st.secrets["TMDB_API_TOKEN"]
+st.set_page_config(page_title="Movie Explorer", page_icon="🎬")
 
-HEADERS = {
-    "accept": "application/json",
-    "Authorization": f"Bearer {API_TOKEN}"
-}
+API_KEY = st.secrets["TMDB_API_KEY"]
 
 def get_genres():
     url = "https://api.themoviedb.org/3/genre/movie/list"
-    response = requests.get(url, headers=HEADERS)
+    params = {
+        "api_key": API_KEY,
+        "language": "en-US"
+    }
+    response = requests.get(url, params=params)
 
     if response.status_code != 200:
         st.error(f"Genre request failed: {response.status_code}")
@@ -25,12 +26,13 @@ def get_genres():
 def search_movies(query):
     url = "https://api.themoviedb.org/3/search/movie"
     params = {
+        "api_key": API_KEY,
         "query": query,
         "include_adult": "false",
         "language": "en-US",
         "page": 1
     }
-    response = requests.get(url, headers=HEADERS, params=params)
+    response = requests.get(url, params=params)
 
     if response.status_code != 200:
         st.error(f"Search request failed: {response.status_code}")
@@ -43,13 +45,14 @@ def search_movies(query):
 def discover_movies_by_genre(genre_id):
     url = "https://api.themoviedb.org/3/discover/movie"
     params = {
+        "api_key": API_KEY,
         "with_genres": genre_id,
         "include_adult": "false",
         "language": "en-US",
         "page": 1,
         "sort_by": "popularity.desc"
     }
-    response = requests.get(url, headers=HEADERS, params=params)
+    response = requests.get(url, params=params)
 
     if response.status_code != 200:
         st.error(f"Discover request failed: {response.status_code}")
@@ -64,7 +67,7 @@ def build_poster_url(poster_path):
         return None
     return f"https://image.tmdb.org/t/p/w500{poster_path}"
 
-st.title("Movie Explorer")
+st.title("🎬 Movie Explorer")
 st.write("Search for movies and explore ratings, posters, and trends.")
 
 query = st.text_input("Enter a movie title:")
@@ -124,9 +127,18 @@ if st.button("Search Movies"):
             df = pd.DataFrame(chart_data)
 
             st.subheader("Ratings Chart")
-            fig, ax = plt.subplots()
-            ax.barh(df["Title"], df["Rating"])
-            ax.set_xlabel("Rating")
-            ax.set_title("Movie Ratings")
+            fig1, ax1 = plt.subplots()
+            ax1.barh(df["Title"], df["Rating"])
+            ax1.set_xlabel("Rating")
+            ax1.set_title("Movie Ratings")
             plt.tight_layout()
-            st.pyplot(fig)                   
+            st.pyplot(fig1)
+
+            st.subheader("Popularity Chart")
+            fig2, ax2 = plt.subplots()
+            ax2.bar(df["Title"], df["Popularity"])
+            ax2.set_ylabel("Popularity")
+            ax2.set_title("Movie Popularity")
+            plt.xticks(rotation=45, ha="right")
+            plt.tight_layout()
+            st.pyplot(fig2)
