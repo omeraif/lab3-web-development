@@ -3,6 +3,8 @@ import requests
 import pandas as pd
 import matplotlib.pyplot as plt
 
+API_TOKEN = st.secrets["TMDB_API_TOKEN"]
+
 HEADERS = {
     "accept": "application/json",
     "Authorization": f"Bearer {API_TOKEN}"
