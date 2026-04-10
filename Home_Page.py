@@ -13,6 +13,6 @@ Welcome to our Streamlit Web Development Lab03 app! You can navigate between the
 The following pages are:
 
 1. **Home Page** – Introduction to our project
-2. **ReelMatch** – A movie finder that uses an external web API
+2. **API Page** – A movie finder that uses an external web API
 3. **CineCompass** – A movie-themed AI chatbot powered by Google Gemini
 """)
