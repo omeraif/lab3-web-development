@@ -1,6 +1,8 @@
 import streamlit as st
 import google.generativeai as genai
 
+GEMINI_API_KEY = "AIzaSyBIHkN2H7Q15dN9jAvzznq0EXdLbSmGcr0"
+
 st.set_page_config(page_title="CineCompass", page_icon="🎬")
 
 st.title("🎬 CineCompass")
