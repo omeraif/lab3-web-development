@@ -87,7 +87,27 @@ with st.sidebar:
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.write(msg["content"])
+st.markdown("### Suggested Questions")
 
+col1, col2, col3 = st.columns(3)
+
+if col1.button("Spoiler-free summary"):
+    st.session_state.movie_chat_messages.append(
+        {"role": "user", "content": "Give me a spoiler-free summary of this movie."}
+    )
+    st.rerun()
+
+if col2.button("Family-friendly?"):
+    st.session_state.movie_chat_messages.append(
+        {"role": "user", "content": "Is this movie family-friendly?"}
+    )
+    st.rerun()
+
+if col3.button("Genre and mood"):
+    st.session_state.movie_chat_messages.append(
+        {"role": "user", "content": "What genre and mood does this movie fit best?"}
+    )
+    st.rerun()
 # ---------- User Input ----------
 user_input = st.chat_input("Ask CineCompass about movies...")
 
