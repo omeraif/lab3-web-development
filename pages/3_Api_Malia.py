@@ -2,18 +2,15 @@ import streamlit as st
 import requests
 from google import genai
 
-### Config
-
 st.set_page_config(page_title="AI Movie Night Planner", page_icon="🎬", layout="wide")
 
-TMDB_BEARER_TOKEN = "TMDB_API_TOKEN"
-GEMINI_API_KEY = "GEMINI_API_KEY"
+TMDB_BEARER_TOKEN = st.secrets["TMDB_API_TOKEN"]
+GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
 
 TMDB_HEADERS = {
     "accept": "application/json",
     "Authorization": f"Bearer {TMDB_BEARER_TOKEN}"
 }
-
 ###Functions to help
 
 def get_genres():
