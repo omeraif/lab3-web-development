@@ -11,7 +11,7 @@ GEMINI_API_KEY = "GEMINI_API_KEY"
 
 TMDB_HEADERS = {
     "accept": "application/json",
-    "Authorization": f"Bearer {TMDB_API_TOKEN}"
+    "Authorization": f"Bearer {TMDB_BEARER_TOKEN}"
 }
 
 ###Functions to help
