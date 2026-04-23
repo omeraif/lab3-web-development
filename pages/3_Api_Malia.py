@@ -6,12 +6,12 @@ from google import genai
 
 st.set_page_config(page_title="AI Movie Night Planner", page_icon="🎬", layout="wide")
 
-TMDB_BEARER_TOKEN = "7a459e663539208128d8131d7d8cd173"
-GEMINI_API_KEY = "AIzaSyAs6hs5aHn-fyNbVgphWWCnW5-lV3yxnZw"
+TMDB_BEARER_TOKEN = "TOKEN"
+GEMINI_API_KEY = "KEY"
 
 TMDB_HEADERS = {
     "accept": "application/json",
-    "Authorization": f"Bearer {7a459e663539208128d8131d7d8cd173}"
+    "Authorization": f"Bearer {TOKEN}"
 }
 
 ###Functions to help
