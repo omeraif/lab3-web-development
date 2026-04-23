@@ -7,11 +7,7 @@ st.set_page_config(page_title="AI Movie Night Planner", page_icon="🎬", layout
 TMDB_API_KEY = st.secrets["TMDB_API_KEY"]
 GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
 
-TMDB_HEADERS = {
-    "accept": "application/json",
-    "Authorization": f"Bearer {TMDB_API_KEY}"
-}
-###Functions to help
+### Functions to help
 
 def get_genres():
     """
@@ -20,7 +16,11 @@ def get_genres():
     [{"id": 28, "name": "Action"}, ...]
     """
     url = "https://api.themoviedb.org/3/genre/movie/list"
-    response = requests.get(url, headers=TMDB_HEADERS, params={"language": "en"})
+    params = {
+        "api_key": TMDB_API_KEY,
+        "language": "en-US"
+    }
+    response = requests.get(url, params=params)
     response.raise_for_status()
     data = response.json()
     return data.get("genres", [])
@@ -32,6 +32,7 @@ def discover_movies_by_genre(genre_id):
     """
     url = "https://api.themoviedb.org/3/discover/movie"
     params = {
+        "api_key": TMDB_API_KEY,
         "language": "en-US",
         "sort_by": "popularity.desc",
         "include_adult": "false",
@@ -41,7 +42,7 @@ def discover_movies_by_genre(genre_id):
         "vote_count.gte": 100
     }
 
-    response = requests.get(url, headers=TMDB_HEADERS, params=params)
+    response = requests.get(url, params=params)
     response.raise_for_status()
     data = response.json()
     return data.get("results", [])
@@ -51,7 +52,6 @@ def filter_movies_by_runtime_preference(movie_list, runtime_pref):
     """
     Runtime isn't included in discover results by default,
     so this function uses a rough filter based on popularity results already returned.
-    To keep the code simple for class purposes, we'll just slice results differently.
     """
     if runtime_pref == "Shorter":
         return movie_list[:5]
@@ -143,13 +143,15 @@ with st.container():
         genres = get_genres()
         genre_names = [genre["name"] for genre in genres]
         genre_lookup = {genre["name"]: genre["id"] for genre in genres}
-    except Exception:
+    except Exception as e:
         genres = []
         genre_names = []
         genre_lookup = {}
+        st.error("Could not load genres from TMDB.")
+        st.code(str(e))
 
     with col1:
-        selected_genre = st.selectbox("Choose a genre", genre_names)
+        selected_genre = st.selectbox("Choose a genre", genre_names if genre_names else ["No genres found"])
 
     with col2:
         mood = st.selectbox(
@@ -165,15 +167,17 @@ with st.container():
 
 generate_button = st.button("Generate My Movie Night Plan")
 
-###Main logic here
+### Main logic here
 
 if generate_button:
-    if not TMDB_BEARER_TOKEN or TMDB_BEARER_TOKEN == "TOKEN":
-        st.error("TOKON")
+    if not TMDB_API_KEY or TMDB_API_KEY == "TOKEN":
+        st.error("TMDB API key is missing.")
     elif not GEMINI_API_KEY or GEMINI_API_KEY == "KEY":
-        st.error("Gemini API key.")
-    elif not selected_genre:
-        st.error("Please choose a genre.")
+        st.error("Gemini API key is missing.")
+    elif not genre_names:
+        st.error("Please make sure genres are loading correctly.")
+    elif selected_genre == "No genres found":
+        st.error("Please choose a valid genre.")
     else:
         try:
             genre_id = genre_lookup[selected_genre]
