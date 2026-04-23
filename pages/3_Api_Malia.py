@@ -4,7 +4,7 @@ from google import genai
 
 st.set_page_config(page_title="AI Movie Night Planner", page_icon="🎬", layout="wide")
 
-TMDB_BEARER_TOKEN = st.secrets["TMDB_API_TOKEN"]
+TMDB_BEARER_TOKEN = st.secrets["TMDB_API_KEY"]
 GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
 
 TMDB_HEADERS = {
