@@ -1,18 +1,15 @@
 import streamlit as st
 import requests
-import google.generativeai as genai
+from google import genai
 
 st.set_page_config(page_title="Movie Advisor", page_icon="🎬")
 
-# ---------- Secrets ----------
 TMDB_API_KEY = st.secrets["TMDB_API_KEY"]
 GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
 
-# ---------- Gemini Setup ----------
-genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel("gemini-3-flash-preview")
+client = genai.Client(api_key=GEMINI_API_KEY)
 
-# ---------- TMDb Helpers ----------
+
 def search_movies(query):
     url = "https://api.themoviedb.org/3/search/movie"
     params = {
@@ -22,6 +19,7 @@ def search_movies(query):
         "language": "en-US",
         "page": 1
     }
+
     response = requests.get(url, params=params)
 
     if response.status_code != 200:
@@ -32,12 +30,14 @@ def search_movies(query):
     data = response.json()
     return data.get("results", [])
 
+
 def get_genres():
     url = "https://api.themoviedb.org/3/genre/movie/list"
     params = {
         "api_key": TMDB_API_KEY,
         "language": "en-US"
     }
+
     response = requests.get(url, params=params)
 
     if response.status_code != 200:
@@ -47,16 +47,16 @@ def get_genres():
     genres = data.get("genres", [])
     return {genre["id"]: genre["name"] for genre in genres}
 
+
 def build_poster_url(poster_path):
     if not poster_path:
         return None
     return f"https://image.tmdb.org/t/p/w500{poster_path}"
 
-# ---------- Page Title ----------
+
 st.title("🎬 Movie Advisor")
 st.write("Choose a movie and chat with an AI that knows its API data.")
 
-# ---------- Session State ----------
 if "movie_chat_messages" not in st.session_state:
     st.session_state.movie_chat_messages = []
 
@@ -66,7 +66,7 @@ if "selected_movie_context" not in st.session_state:
 if "selected_movie_title" not in st.session_state:
     st.session_state.selected_movie_title = ""
 
-# ---------- Movie Input ----------
+
 movie_query = st.text_input("Enter a movie title to load into the chatbot:")
 
 if st.button("Load Movie"):
@@ -125,36 +125,16 @@ Genres: {genre_text}
             if poster_url:
                 st.image(poster_url, width=250)
 
-# ---------- Show Selected Movie Info ----------
+
 if st.session_state.selected_movie_title != "":
     st.markdown(f"### Current Movie: {st.session_state.selected_movie_title}")
 
-# ---------- Display Chat ----------
+
 for msg in st.session_state.movie_chat_messages:
     with st.chat_message(msg["role"]):
         st.write(msg["content"])
-st.markdown("### Suggested Questions")
 
-col1, col2, col3 = st.columns(3)
 
-if col1.button("Spoiler-free summary"):
-    st.session_state.movie_chat_messages.append(
-        {"role": "user", "content": "Give me a spoiler-free summary of this movie."}
-    )
-    st.rerun()
-
-if col2.button("Family-friendly?"):
-    st.session_state.movie_chat_messages.append(
-        {"role": "user", "content": "Is this movie family-friendly?"}
-    )
-    st.rerun()
-
-if col3.button("Genre and mood"):
-    st.session_state.movie_chat_messages.append(
-        {"role": "user", "content": "What genre and mood does this movie fit best?"}
-    )
-    st.rerun()
-# ---------- Chat Input ----------
 if st.session_state.selected_movie_context != "":
     user_input = st.chat_input("Ask about this movie...")
 
@@ -188,7 +168,10 @@ Respond to the user's latest message.
 """
 
         try:
-            response = model.generate_content(prompt)
+            response = client.models.generate_content(
+                model="gemini-2.0-flash",
+                contents=prompt
+            )
             bot_reply = response.text.strip()
         except Exception:
             bot_reply = "Sorry, I’m having trouble responding right now. Please try again in a moment."
