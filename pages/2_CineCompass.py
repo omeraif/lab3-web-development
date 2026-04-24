@@ -8,11 +8,6 @@ st.subheader("Your movie mood and recommendation chatbot")
 
 st.write("""
 Talk to CineCompass about movies, genres, moods, and what to watch next.
-
-Examples:
-- Recommend a funny movie for tonight
-- I liked Interstellar and Inception, what should I watch next?
-- Suggest a family-friendly adventure movie
 """)
 
 # ---------- Debug: Check Secrets ----------
@@ -63,26 +58,6 @@ with st.sidebar:
         ]
         st.rerun()
 
-    st.markdown("### Quick Prompts")
-
-    if st.button("Funny movie for tonight"):
-        st.session_state.messages.append(
-            {"role": "user", "content": "Recommend a funny movie for tonight."}
-        )
-        st.rerun()
-
-    if st.button("Sci-fi recommendation"):
-        st.session_state.messages.append(
-            {"role": "user", "content": "Recommend a sci-fi movie with a smart story."}
-        )
-        st.rerun()
-
-    if st.button("Family movie"):
-        st.session_state.messages.append(
-            {"role": "user", "content": "Suggest a family-friendly movie for the weekend."}
-        )
-        st.rerun()
-
 # ---------- Display Chat History ----------
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
@@ -92,12 +67,11 @@ for msg in st.session_state.messages:
 user_input = st.chat_input("Ask CineCompass about movies...")
 
 if user_input:
-    # Save and display user message
     st.session_state.messages.append({"role": "user", "content": user_input})
+
     with st.chat_message("user"):
         st.write(user_input)
 
-    # Build conversation memory
     conversation_text = ""
     for msg in st.session_state.messages:
         role_name = "User" if msg["role"] == "user" else "Assistant"
@@ -120,14 +94,13 @@ Conversation so far:
 Respond to the user's latest message.
 """
 
-    # Generate response safely
     try:
         response = model.generate_content(prompt)
         bot_reply = response.text.strip()
     except Exception as e:
         bot_reply = f"Sorry, I’m having trouble responding right now. Error: {e}"
 
-    # Save and display assistant reply
     st.session_state.messages.append({"role": "assistant", "content": bot_reply})
+
     with st.chat_message("assistant"):
         st.write(bot_reply)
