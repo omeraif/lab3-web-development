@@ -13,7 +13,7 @@ Welcome to our Streamlit Web Development Lab03 app! You can navigate between the
 The following pages are:
 
 1. **Home Page** – Introduction to our project
-2. **API Page** – A movie finder that uses an external web API
+2. **Movie Explorer** – A movie finder that uses an external web API
 3. **CineCompass** – A movie-themed AI chatbot powered by Google Gemini
 4. **AI Movie Night Plannera** – Search for a movie and ask AI questions about it using TMDB and Gemini
 5. **Movie Advisor** – A movie recommendation chatbot powered by Google Gemini
