@@ -2,9 +2,9 @@ import streamlit as st
 
 st.set_page_config(page_title="ReelMatch", page_icon="🎬")
 
-st.title("🎬 Web Development Lab03")
+st.title("🎬 Web Development Lab03-04")
 st.header("CS 1301")
-st.subheader("Web Development Lab03 - Movie Finder, Chatbot & more...")
+st.subheader("Web Development Lab03-04 - Movie Finder, Chatbot & more...")
 st.subheader("Malia Radcliffe - Omer Raif Ozoglu")
 
 st.write("""
