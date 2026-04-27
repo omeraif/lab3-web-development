@@ -1,5 +1,5 @@
 import streamlit as st
-import google.generativeai as genai
+from google import genai
 
 st.set_page_config(page_title="CineCompass", page_icon="🎬")
 
@@ -10,33 +10,9 @@ st.write("""
 Talk to CineCompass about movies, genres, moods, and what to watch next.
 """)
 
-# ---------- Debug: Check Secrets ----------
-st.write("Secrets found:", list(st.secrets.keys()))
+api_key = st.secrets["GEMINI_API_KEY"]
+client = genai.Client(api_key=api_key)
 
-try:
-    api_key = st.secrets["GEMINI_API_KEY"]
-    st.success("Gemini API key found.")
-except Exception as e:
-    st.error(f"Secret read error: {e}")
-    st.stop()
-
-# ---------- Gemini Setup ----------
-try:
-    genai.configure(api_key=api_key)
-    st.success("Gemini configured successfully.")
-except Exception as e:
-    st.error(f"Gemini configure error: {e}")
-    st.stop()
-
-# ---------- Model ----------
-try:
-    model = genai.GenerativeModel("gemini-3-flash-preview")
-    st.success("Gemini model loaded successfully.")
-except Exception as e:
-    st.error(f"Model error: {e}")
-    st.stop()
-
-# ---------- Session State ----------
 if "messages" not in st.session_state:
     st.session_state.messages = [
         {
@@ -45,7 +21,6 @@ if "messages" not in st.session_state:
         }
     ]
 
-# ---------- Sidebar ----------
 with st.sidebar:
     st.header("Chat Controls")
 
@@ -58,12 +33,10 @@ with st.sidebar:
         ]
         st.rerun()
 
-# ---------- Display Chat History ----------
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.write(msg["content"])
 
-# ---------- User Input ----------
 user_input = st.chat_input("Ask CineCompass about movies...")
 
 if user_input:
@@ -95,7 +68,10 @@ Respond to the user's latest message.
 """
 
     try:
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(
+            model="gemini-2.0-flash",
+            contents=prompt
+        )
         bot_reply = response.text.strip()
     except Exception as e:
         bot_reply = f"Sorry, I’m having trouble responding right now. Error: {e}"
